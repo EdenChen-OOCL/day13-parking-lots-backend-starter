@@ -51,4 +51,24 @@ Tasking:
 
 3. generate Code strictly following the tasking. keep the code clean and simple, no code smell. Use Stream API to simplify the code.
 
+第二次迭代：
+Bussiness Requirements:
+1. License Plate Validation
+   ○ License plates must follow the format standard: two letters + four digits (e.g., “AB-1234”).
+   ○ The system must reject empty or invalid license plate entries.
+
+Tasking:
+1. create a sub class of RunTimeException called "InvalidLicensePlateException"
+2. add validate logic in parkCar method of the ParkingManager class
+   4) method:
+      1. parkCar(ParkingStrategy parkingStrategy, Car car): Ticket - validate the car's license plate(String type), if it is empty or invalid, throw an "InvalidLicensePlateException".
+
+3. add test method in ParkingManagerTest
+   1) Requirement: Junit 5, method name should be "should_return_xxx_when_calledMethodName_given_xxx"
+   2) Test case:
+      1. should throw an "InvalidLicensePlateException" exception when the car's license plate is empty.
+      2. should throw an "InvalidLicensePlateException" exception when the car's license plate is invalid.
+
+3. generate Code strictly following the tasking. keep the code clean and simple, no code smell. Use Stream API to simplify the code.
+
 
