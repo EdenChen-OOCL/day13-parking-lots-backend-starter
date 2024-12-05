@@ -74,4 +74,6 @@ public class ParkingManager {
     public List<ParkingLot> getParkingLots() {
         return parkingLots;
     }
+
+
 }
