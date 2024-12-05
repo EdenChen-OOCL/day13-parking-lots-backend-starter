@@ -1,8 +1,11 @@
 package org.afs.pakinglot.domain;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.afs.pakinglot.domain.exception.InvalidLicensePlateException;
 import org.afs.pakinglot.domain.exception.UnrecognizedTicketException;
 import org.afs.pakinglot.domain.strategies.AvailableRateStrategy;
@@ -31,6 +34,23 @@ public class ParkingManager {
 
     public Car fetchCar(Ticket ticket) {
         return standardParkingBoy.fetch(ticket);
+    }
+
+    public List<ParkingLotDTO> displayParkingStatus() {
+        return parkingLots.stream()
+                .map(parkingLot -> new ParkingLotDTO(
+                        parkingLot.getId(),
+                        parkingLot.getName(),
+                        IntStream.range(0, parkingLot.getCapacity())
+                                .mapToObj(i -> parkingLot.getTickets().stream()
+                                        .filter(ticket -> ticket.position() == i)
+                                        .map(Ticket::plateNumber)
+                                        .findFirst()
+                                        .orElse("")
+                                )
+                                .collect(Collectors.toList())
+                ))
+                .collect(Collectors.toList());
     }
 
     private static void validateLicensePlate(String plateNumber) {

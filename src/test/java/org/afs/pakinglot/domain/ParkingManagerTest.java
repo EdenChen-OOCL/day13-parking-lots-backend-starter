@@ -85,4 +85,18 @@ class ParkingManagerTest {
         assertEquals(car, fetchedCar);
     }
 
+    @Test
+    void should_return_parking_lot_status_when_displayParkingStatus_called() {
+        Car car = new Car("FD-6346");
+        parkingManager.parkCar(new SequentiallyStrategy(), car);
+        String expectJson = "[{\"parkingLotId\": 1, \"parkingLotName\": \"Plaza Park\", \"position\": [, FD-6346, , , , , , , ]}, {\"parkingLotId\": 2, \"parkingLotName\": \"City Mall Garage\", \"position\": [, , , , , , , , , , , ]}, {\"parkingLotId\": 3, \"parkingLotName\": \"Office Tower Parking\", \"position\": [, , , , , , , , ]}]";
+        List<ParkingLotDTO> status = parkingManager.displayParkingStatus();
+        assertNotNull(status);
+        assertEquals(3, status.size());
+        assertEquals(9, status.get(0).getPosition().size());
+        assertEquals(12, status.get(1).getPosition().size());
+        assertEquals(9, status.get(2).getPosition().size());
+        assertEquals(expectJson, status.toString());
+    }
+
 }

@@ -71,4 +71,26 @@ Tasking:
 
 3. generate Code strictly following the tasking. keep the code clean and simple, no code smell. Use Stream API to simplify the code.
 
+第三次迭代：
+Bussiness Requirements:
+1. Parking Lot Status Display
+   ○ The system should clearly display the current status of all three parking lots, showing the license plate of the car parked
+   in each parking position to provide a real-time view of parking lot usage.
+
+Tasking:
+1. create a class ParkingLot DTO. Its variable is "parkingLotId", "parkingLotName", "position" - a ArrayList of parking position, each position is a string. 
+   empty is "", and "AB-1234" is the platNumber of car , which represent that the car is using the position.
+   josn is "{"parkingLotId": 1,"parkingLotName": "The Plaza Park", "position": ["AB-1234", "", ""] }"
+2. add a displayParkingStatus method of the ParkingManager class
+   4) method:
+      1. displayParkingStatus(): List<ParkingLot> - return the parking lot status display. The return value is a list of ParkingLot DTO. 
+         json is like "[{"parkingLotId": 1,"parkingLotName": "The Plaza Park", "position": ["AB-1234", "", ""] }, {"parkingLotId": 2,"parkingLotName": "City Mall Garage", "position": ["", "", ""] }, {"parkingLotId": 3,"parkingLotName": "Office Tower Parking", "position": ["", "", ""] }]"
+         
+3. add test method in ParkingManagerTest
+   1) Requirement: Junit 5, method name should be "should_return_xxx_when_calledMethodName_given_xxx"
+   2) Test case:
+      1. should display the parking lot status correctly.
+
+3. generate Code strictly following the tasking. keep the code clean and simple, no code smell. Use Stream API to simplify the code.
+
 
