@@ -3,6 +3,7 @@ package org.afs.pakinglot.domain.controller;
 import org.afs.pakinglot.domain.Car;
 import org.afs.pakinglot.domain.ParkingLotDTO;
 import org.afs.pakinglot.domain.Ticket;
+import org.afs.pakinglot.domain.constants.ParkingStrategyEnum;
 import org.afs.pakinglot.domain.service.ParkingService;
 import org.springframework.http.ResponseEntity;
 
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -31,8 +33,8 @@ public class ParkingController {
     }
 
     @PostMapping("/parking-car")
-    public ResponseEntity<Ticket> parkCar(@RequestBody Car car) {
-        Ticket ticket = parkingService.parkCar(car);
+    public ResponseEntity<Ticket> parkCar(@RequestParam ParkingStrategyEnum parkingStrategyEnum, @RequestBody Car car) {
+        Ticket ticket = parkingService.parkCar(parkingStrategyEnum, car);
         return ResponseEntity.ok(ticket);
     }
 

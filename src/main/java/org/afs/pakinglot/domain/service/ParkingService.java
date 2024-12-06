@@ -1,9 +1,12 @@
 package org.afs.pakinglot.domain.service;
 
+import java.util.Objects;
 import org.afs.pakinglot.domain.Car;
 import org.afs.pakinglot.domain.ParkingLotDTO;
 import org.afs.pakinglot.domain.ParkingManager;
 import org.afs.pakinglot.domain.Ticket;
+import org.afs.pakinglot.domain.constants.ParkingStrategyEnum;
+import org.afs.pakinglot.domain.strategies.ParkingStrategy;
 import org.afs.pakinglot.domain.strategies.SequentiallyStrategy;
 import org.springframework.stereotype.Service;
 
@@ -22,8 +25,9 @@ public class ParkingService {
         return parkingManager.displayParkingStatus();
     }
 
-    public Ticket parkCar(Car car) {
-        return parkingManager.parkCar(new SequentiallyStrategy(), car);
+    public Ticket parkCar(ParkingStrategyEnum parkingStrategyEnum, Car car) {
+        ParkingStrategy parkingStrategy = Objects.nonNull(parkingStrategyEnum)? parkingStrategyEnum.getStrategy(): new SequentiallyStrategy();
+        return parkingManager.parkCar(parkingStrategy, car);
     }
 
     public Car fetchCar(Ticket ticket) {
