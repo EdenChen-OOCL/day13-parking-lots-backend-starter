@@ -28,8 +28,16 @@ public class ParkingManager {
 
     public Ticket parkCar(ParkingStrategy parkingStrategy, Car car) {
         validateLicensePlate(car.plateNumber());
+        validatePlateNumberUniqueness(car.plateNumber());
         ParkingBoy selectedParkingBoy = selectParkingBoy(parkingStrategy);
         return selectedParkingBoy.park(car);
+    }
+
+    private void validatePlateNumberUniqueness(String s) {
+        if (parkingLots.stream().anyMatch(parkingLot -> parkingLot.getTickets().stream()
+                .anyMatch(ticket -> ticket.plateNumber().equals(s)))) {
+            throw new InvalidLicensePlateException("Duplicated license plate: " + s);
+        }
     }
 
     public Car fetchCar(Ticket ticket) {

@@ -1,5 +1,6 @@
 package org.afs.pakinglot.controller;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -15,6 +16,7 @@ import org.afs.pakinglot.domain.Car;
 import org.afs.pakinglot.domain.ParkingLotDTO;
 import org.afs.pakinglot.domain.ParkingManager;
 import org.afs.pakinglot.domain.Ticket;
+import org.afs.pakinglot.domain.constants.ParkingStrategyEnum;
 import org.afs.pakinglot.domain.controller.ParkingController;
 import org.afs.pakinglot.domain.exception.InvalidLicensePlateException;
 import org.afs.pakinglot.domain.exception.NoAvailablePositionException;
@@ -48,9 +50,6 @@ public class ParkingControllerTest {
     @Mock
     private ParkingService parkingService;
 
-    @Autowired
-    private JacksonTester<Car> json;
-
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -72,11 +71,17 @@ public class ParkingControllerTest {
 
     @Test
     void should_park_car_then_return_ticket() throws Exception {
-        Ticket ticket = new Ticket("AB-1234", 1, 1);
-        when(parkingService.parkCar(Mockito.any(Car.class))).thenReturn(ticket);
+        Car car = new Car("AB-1234");
+        Ticket ticket = new Ticket("AB-1210", null, null);
+        when(parkingService.parkCar(ParkingStrategyEnum.FIRST_PARKING_LOT, car)).thenReturn(ticket);
+
+        mockMvc.perform(delete("/parking-car")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"plateNumber\":\"AB-1210\"}"));
 
         mockMvc.perform(post("/parking-car")
                 .contentType(MediaType.APPLICATION_JSON)
+                .param("parkingStrategyEnum", ParkingStrategyEnum.FIRST_PARKING_LOT.name())
                 .content("{\"plateNumber\":\"AB-1234\"}")
                 )
                 .andExpect(status().isOk())
@@ -88,6 +93,7 @@ public class ParkingControllerTest {
         Car car = new Car("AB-1234");
         String responseJSON = mockMvc.perform(post("/parking-car")
                 .contentType(MediaType.APPLICATION_JSON)
+                .param("parkingStrategyEnum", ParkingStrategyEnum.FIRST_PARKING_LOT.name())
                 .content("{\"plateNumber\":\"AB-1234\"}"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
@@ -102,20 +108,23 @@ public class ParkingControllerTest {
 
     @Test
     void should_throw_NoAvailablePositionException_when_all_parking_lot_is_full() throws Exception {
-        when(parkingService.parkCar(Mockito.any(Car.class))).thenThrow(new NoAvailablePositionException());
         // fill all parking lots
         IntStream.range(0, 30).forEach(i -> {
+            int plateNumber = 1200 + i;
             try {
                 mockMvc.perform(post("/parking-car")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"plateNumber\":\"AB-1234\"}"));
+                        .param("parkingStrategyEnum", ParkingStrategyEnum.FIRST_PARKING_LOT.name())
+                        .content("{\"plateNumber\":\"AB-" + plateNumber + "\"}"));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });
+        when(parkingService.parkCar(any(), Mockito.any(Car.class))).thenThrow(new NoAvailablePositionException());
         mockMvc.perform(post("/parking-car")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"plateNumber\":\"AB-1234\"}"))
+                .param("parkingStrategyEnum", ParkingStrategyEnum.FIRST_PARKING_LOT.name())
+                .content("{\"plateNumber\":\"AB-6666\"}"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string("No available position."));
     }
@@ -133,10 +142,11 @@ public class ParkingControllerTest {
 
     @Test
     void should_throw_InvalidLicensePlateException_when_car_license_plate_is_empty() throws Exception {
-        when(parkingService.parkCar(Mockito.any(Car.class))).thenThrow(new InvalidLicensePlateException("Invalid license plate"));
+        when(parkingService.parkCar(any(), Mockito.any(Car.class))).thenThrow(new InvalidLicensePlateException("Invalid license plate"));
 
         mockMvc.perform(post("/parking-car")
                 .contentType(MediaType.APPLICATION_JSON)
+                .param("parkingStrategyEnum", ParkingStrategyEnum.FIRST_PARKING_LOT.name())
                 .content("{\"plateNumber\":\"\"}"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string("Invalid license plate: "));

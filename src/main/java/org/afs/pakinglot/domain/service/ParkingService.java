@@ -15,7 +15,7 @@ import java.util.List;
 @Service
 public class ParkingService {
 
-    private final ParkingManager parkingManager;
+    private ParkingManager parkingManager;
 
     public ParkingService() {
         this.parkingManager = new ParkingManager();
