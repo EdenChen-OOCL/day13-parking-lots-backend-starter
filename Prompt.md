@@ -135,4 +135,9 @@ Tasking:
 
 3. generate Code strictly following the tasking. keep the code clean and simple, no code smell. Use Stream API to simplify the code.
 
+第五次迭代：
+Bussiness Requirements:
+我现在需要把后端服务的API暴露给其他机器的前端服务使用。现有代码要怎么改造才能支持这个需求呢？
+
+
 

@@ -49,6 +49,7 @@ public class ParkingManager {
                 .map(parkingLot -> new ParkingLotDTO(
                         parkingLot.getId(),
                         parkingLot.getName(),
+                        parkingLot.getCapacity(),
                         IntStream.range(0, parkingLot.getCapacity())
                                 .mapToObj(i -> parkingLot.getTickets().stream()
                                         .filter(ticket -> ticket.position() == i)
